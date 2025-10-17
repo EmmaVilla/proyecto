@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel del Candidato</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+    <h1 class="mb-4">Bienvenido Candidato</h1>
+    <form method="post" enctype="multipart/form-data" class="row g-3">
+        <input type="hidden" name="candidato_id" value="{{id}}">
+        <div class="col-md-6">
+            <label for="archivo" class="form-label">Subir Documento PDF</label>
+            <input type="file" class="form-control" name="archivo" accept="application/pdf" multiple required>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-success">Subir Documento</button>
+        </div>
+    </form>
+    <hr>
+    <form method="post" class="row g-3">
+        <input type="hidden" name="candidato_id" value="{{id}}">
+        <div class="col-md-6">
+            <label class="form-label">Estado Civil: </label>
+            <select id="situacion_familiar" name="situacion_familiar">
+            <option value="" disabled selected>-- Selecciona una opción --</option>
+            <option value="Soltero/a">Soltero/a</option>
+            <option value="Casado/a">Casado/a</option>
+            <option value="Divorciado/a">Divorciado/a</option>
+            <option value="Union Libre">Union Libre</option>
+            <option value="Viudo/a">Viudo/a</option>
+            </select>
+            <!----<input type="text" class="form-control" name="situacion_familiar"> -->
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Ingresos Mensuales$:</label>
+            <input type="text" class="form-control" name="ingresos">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Gastos Mensuales $</label>
+            <input type="text" class="form-control" name="gastos">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Situación Laboral:</label>
+            <input type="text" class="form-control" name="situacion_laboral" placeholder="Empleado / Desempleado">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Ultimo Grado de Estudios:</label>
+            <select id="educacion" name="educacion">
+            <option value="" disabled selected>-- Selecciona una opción --</option>
+            <option value="Primaria">Primaria</option>
+            <option value="Secuandaria">Secuandaria</option>
+            <option value="Bachillerato">Bachillerato (Preparatoria)</option>
+            <option value="Licenciatura">Licenciatura</option>
+            <option value="especialidad">especialidad</option>
+            </select>
+           <!--<input type="text" class="form-control" name="educacion"> --> 
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Vivienda</label>
+            <input type="text" class="form-control" name="vivienda" placeholder="Describa nubero de cuartos, material, etc...">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Referencias</label>
+            <input type="text" class="form-control" name="referencias" placeholder="Nombre Completo, celular">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">¿Cuenta con atecedentes penales?</label>
+            <input type="text" class="form-control" name="antecedentes" placeholder="describa sus antecedentes / Ninguno">
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Enviar Datos</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

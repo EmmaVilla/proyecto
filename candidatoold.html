@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal del Candidato</title>
+</head>
+<body>
+    <h1>Registro de Candidato</h1>
+    <form action= http://localhost:8000/registro method="post">
+        
+        Nombre: <input type="text" name="nombre"><br>
+        Email: <input type="email" name="email"><br>
+        Contraseña: <input type="password" name="password"><br>
+       
+        <input type="submit" value="Registrarse">
+    </form>
+
+    <h2>Subir Documento</h2>
+    <form action= http://localhost:8000/subir_documento method="post" enctype="multipart/form-data">
+        ID Candidato: <input type="number" name="candidato_id"><br>
+        Archivo PDF: <input type="file" name="archivo"><br>
+        <input type="submit" value="Subir">
+    </form>
+
+    <h2>Formulario Socioeconómico</h2>
+    <form action=http://localhost:8000/datos_socioeconomicos method="post">
+        ID Candidato: <input type="number" name="candidato_id"><br>
+        Situación familiar: <input type="text" name="situacion_familiar"><br>
+        Ingresos: <input type="text" name="ingresos"><br>
+        Gastos: <input type="text" name="gastos"><br>
+        Situación laboral: <input type="text" name="situacion_laboral"><br>
+        Educación: <input type="text" name="educacion"><br>
+        Vivienda: <input type="text" name="vivienda"><br>
+        Referencias: <input type="text" name="referencias"><br>
+        Antecedentes: <input type="text" name="antecedentes"><br>
+        <input type="submit" value="Enviar">
+    </form>
+
+    <h2>Generar PDF</h2>
+    <form action="http://localhost:8000/generar_pdf" method="get">
+        ID Candidato: <input type="number" name="candidato_id"><br>
+        <input type="submit" value="Generar PDF">
+    </form>
+</body>
+</html>
