@@ -4,10 +4,12 @@ from pydantic import BaseModel
 from typing import List
 from datetime import datetime
 import requests
+
 import shutil
 import os
 import fitz  # PyMuPDF
 import psycopg2
+
 
 # Conexión a PostgreSQL
 conn = psycopg2.connect(
@@ -86,12 +88,13 @@ def guardar_datos(
     return {"mensaje": "Datos guardados correctamente"}
 
 
-
 # Credenciales de Búho Legal
 BUHO_USERNAME = "emmanuel.v@acheme.com.mx"
 BUHO_PASSWORD = "Nuevo*2025$"
 
+
 # Función para obtener el token de autenticación
+
 def obtener_token():
     url = "https://www.buholegal.com/apikey/"
     payload = {
@@ -107,6 +110,7 @@ def obtener_token():
         raise Exception(f"Error {response.status_code}: {response.text}")
 
 # Función para consultar litigios por CURP
+
 def consultar_litigios(curp):
     token = obtener_token()
     url = f"https://www.buholegal.com/busqueda/?curp={curp}"
@@ -124,6 +128,7 @@ def consultar_litigios(curp):
 # Ruta FastAPI para consultar litigios y actualizar base de datos
 @app.post("/consultar_litigios")
 def consultar(candidato_id: int = Form(...), curp: str = Form(...)):
+
     try:
         resultado = consultar_litigios(curp)
         resumen = str(resultado)
@@ -139,6 +144,7 @@ def consultar(candidato_id: int = Form(...), curp: str = Form(...)):
         cursor = conn.cursor()
 
         # Guardar resultado en la base de datos
+
         cursor.execute("UPDATE datos_socioeconomicos SET antecedentes = %s WHERE candidato_id = %s",
                        (resumen, candidato_id))
 
@@ -153,6 +159,7 @@ def consultar(candidato_id: int = Form(...), curp: str = Form(...)):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @app.get("/generar_pdf")
