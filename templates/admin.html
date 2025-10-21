@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel del Administrador</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Panel del Administrador</h1>
+
+    <form method="post" action="/admin/consultar">
+        <label>ID Candidato:</label>
+        <input type="number" name="candidato_id" required><br>
+        <label>CURP:</label>
+        <input type="text" name="curp" required><br>
+        <input type="submit" value="Consultar">
+    </form>
+
+    {% if datos %}
+    <h2>Resultado de la consulta</h2>
+    <table>
+        <tr><th>ID</th><td>{{ datos.id }}</td></tr>
+        <tr><th>Nombre</th><td>{{ datos.nombre }}</td></tr>
+        <tr><th>Email</th><td>{{ datos.email }}</td></tr>
+        <tr><th>Antecedentes</th><td><pre>{{ datos.antecedentes }}</pre></td></tr>
+        <tr><th>Estudio completo</th><td>{{ '✔️' if datos.estudio_completo else '❌' }}</td></tr>
+        <tr><th>Documentos completos</th><td>{{ '✔️' if datos.documentos_completos else '❌' }}</td></tr>
+        <tr><th>API consulta completa</th><td>{{ '✔️' if datos.api_consulta_completa else '❌' }}</td></tr>
+        <tr><th>PDF generado</th><td>{{ '✔️' if datos.pdf_generado else '❌' }}</td></tr>
+    </table>
+
+    <h3>Actualizar estatus</h3>
+    <form method="post" action="/admin/actualizar">
+        <input type="hidden" name="candidato_id" value="{{ datos.id }}">
+        <select name="campo">
+            <option value="estudio_completo">Estudio completo</option>
+            <option value="documentos_completos">Documentos completos</option>
+            <option value="api_consulta_completa">API consulta completa</option>
+            <option value="pdf_generado">PDF generado</option>
+        </select>
+        <select name="valor">
+            <option value="1">✔️</option>
+            <option value="0">❌</option>
+        </select>
+        <input type="submit" value="Actualizar">
+    </form>
+
+    {% if datos.pdf_generado %}
+    <h3>Descargar PDF</h3>
+    <a href="/documentos/{{ datos.id }}/reporte_final.pdf" target="_blank">Descargar reporte</a>
+    {% endif %}
+    {% endif %}
+
+    {% if litigios %}
+    <h3>Resultado de la API Búho Legal</h3>
+    <pre>{{ litigios | tojson(indent=2) }}</pre>
+    {% endif %}
+    <form action="/logout" method="get">
+        <button type="submit">Cerrar sesión</button>
+    </form>
+    
+  <!-- Script para evitar mostrar página en caché al usar botón "Atrás" -->
+    <script>
+        window.onload = function() {
+            if (performance.navigation.type === 2) {
+                location.reload(true);
+            }
+        };
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head> <meta charset="UTF-8">
+</head>
+<body>
+ <h1>Bienvenido al Panel del Candidato</h1>
+    
+    <title>Panel del Candidato</title>
+     <!-- Botón para cerrar sesión -->
+    <form action="/logout" method="get"><button type="submit">Cerrar sesión</button></form> 
+    
+    <!-- Script para evitar mostrar página en caché al usar botón "Atrás" -->
+    <script>window.onload = function() {if (performance.navigation.type === 2) {location.reload(true);}};</script>  
+    {% if mensaje %}
+        <p>{{ mensaje }}</p>
+    {% endif %}
+    <!-- Contenido del panel -->
+    <h2>Datos generales</h2>
+
+    <label for="l1">Nombre completo:</label><br>
+    <input type="text" id="nombre" name="nombre" required><br><br>
+    <label for="l2">Ingrese su CURP:</label><br>
+    <input type="text" id="curp" name="ncurp" required><br><br>
+    <label for="l3">Edad:</label><br>
+    <input type="text" id="edad" name="edad" required><br><br>
+    <label for="l5">Sexo:</label><br>
+    <select ><option value="Hombre">Hombre</option>
+            <option value="Mujer">Mujer</option> </select>
+<br><br>
+    <label for="l6">Tel Celular:</label><br>
+    <input type="text" id="celular" name="celular" required><br><br>
+    <label for="l7">Tel Fijo:</label><br>
+    <input type="text" id="telfijo" name="telfijo" required><br><br>
+
+    <h2>Tipo de vivienda</h2>
+    <select ><option value="Casa independiente">Casa independiente</option>
+            <option value="Anexo a casa">Anexo a casa</option>
+            <option value="Vivienda movil">Vivienda movil</option>
+            <option value="Vivienda o cuarto en vencidad">Vivienda o cuarto en vencidad</option>
+            <option value="Vivienda en construcción no habitada">Vivienda en construcción no habitada</option>
+            <option value="Asilo, orfanato o convento">Asilo, orfanato o convento</option>
+            <option value="Refugio">Refugio</option>
+            <option value="Vivienda o cuarto en azotea">Vivienda o cuarto en azotea</option>
+            <option value="Departamento en edificio/Unidad habitacional">Departamento en edificio/Unidad habitacional</option>
+            </select>
+    <h2>¿Cuántas personas forman parte de su familia, habitan en la misma 
+vivienda contando a los niños pequeños, y adultos mayores?</h2>
+    <label for="l8">hombres:</label><br> 
+    <input type="text" id="thombres" name="thombres" required><br><br>
+    <label for="l9">mujeres:</label><br> 
+    <input type="text" id="tmujeres" name="tmujeres" required><br><br>
+    <label for="l10">Total:</label><br> 
+    <input type="text" id="total" name="total" required><br><br>
+    
+    <h2>Salud</h2>
+    <label for="l11">¿Actualmente padece alguna enfermedad?:</label><br> 
+    <input type="text" id="enfermedad" name="enfermedad" placeholder="No, Si/Especifique" required><br><br>
+    <label for="l12">Actualmente, ¿a qué Institución está afiliada/o o inscrita/o para recibir atención médica?</label><br>
+    <select ><option value="Instituto de la Salud para el Bienestar">Instituto de la Salud para el Bienestar</option>
+            <option value="PEMEX, Defensa o Marina">PEMEX, Defensa o Marina</option>
+            <option value="IMSS">IMSS</option>
+            <option value="Clínica u hospital privado">Clínica u hospital privado</option>
+            <option value="ISSSTE">ISSSTE</option>
+            <option value="A ninguna">A ninguna</option></select><br><br>
+
+    <h2>Situacion</h2>
+    <label for="l13">¿A que se dedica actualmente?</label><br> 
+    <select ><option value="Trabaja">Trabaja</option>
+            <option value="Busca trabajo">Busca trabajo</option>
+            <option value="Estudia">Estudia</option>
+            <option value="Estudia y Trabaja">Estudia y Trabaja</option>
+            <option value="Se dedica al hogar">Se dedica al hogar</option>
+            <option value="Elabora artesanias">Elabora artesanias</option></select><br><br>   
+
+    <label for="l14">Nivel de escolaridad</label><br> 
+    <select ><option value="Kinder/preescolar">Kinder/preescolar</option>
+            <option value="Primaria">Primaria</option>
+            <option value="Secuandaria">Secuandaria</option>
+            <option value="Preparatoria/Bachillerato">Preparatoria/Bachillerato</option>
+            <option value="Carrera técnica o comercial">Carrera técnica o comercial</option>
+            <option value="Profecional/Licenciatura">Profecional/Licenciatura</option>
+            <option value="Maestria/doctorado">Maestria/doctorado</option></select><br><br>
+     
+    <label for="l15">¿Cual es su mayor fuente de ingreso?</label><br>
+    <input type="text" id="Fuente de ingreso" name="Fuente de ingreso" required><br><br>
+    <label for="l16">¿Cuanto tiempo se dedica a trabajar?</label><br>
+    <input type="text" id="Fuente de ingreso" name="Fuente de ingreso" required><br><br>
+    <label for="l17">¿Es persona pensionada o juvilada?<br>¿Cuanto dinero percibe al mes?</label><br>
+    <input type="text" id="ingreso_extra" name="ingreso_extra" required><br><br>
+    
+    <h2>Caracteristicas de la vivienda</h2>
+    <label for="l18">¿Cuántos cuartos tiene en total su vivienda,<br>contando la cocina? (sin contar pasillos ni baños) </label><br>
+    <input type="text" id="cuartos" name="cuartos" required><br><br>
+    <label for="l19">¿Cuántos cuartos usan para dormir? </label><br>
+    <input type="text" id="dormitorios" name="dormitorios" required><br><br>
+
+    <label for="l20">¿De qué material es la mayor parte del piso de su vivienda?</label><br> 
+    <select ><option value="Tierra">Tierra</option>
+            <option value="Cemento">Cemento</option>
+            <option value=" Mosaico, madera u otro recubrimiento"> Mosaico, madera u otro recubrimiento</option></select><br><br>
+    
+    <label for="l21"> ¿De qué material es la mayor parte del techo de su vivienda?</label><br> 
+    <select ><option value="Material de desecho (cartón, hule, tela, llanta)">Material de desecho (cartón, hule, tela, llanta)</option>
+            <option value="Lámina de cartón">Lámina de cartón</option>
+            <option value="Lámina metálica / asbesto">Lámina metálica / asbesto</option>
+            <option value="Vivienda o cuarto en vencidad">Vivienda o cuarto en vencidad</option>
+            <option value="Palma o paja">Palma o paja</option>
+            <option value="Losa de concreto o viguetas con bovedilla">Losa de concreto o viguetas con bovedilla</option>
+            <option value="Madera o tejamanil">Madera o tejamanil</option>
+            <option value="Terrado con viguería">Terrado con viguería</option>
+            <option value="Teja">Teja</option></select><br><br>
+
+    <label for="l22"> ¿De qué material es la mayor parte de las paredes o muros de su vivienda? </label><br> 
+    <select ><option value="Material de desecho (cartón, hule, tela, llanta)">Material de desecho (cartón, hule, tela, llanta)</option>
+            <option value="Lámina de cartón">Lámina de cartón</option>
+            <option value="Lámina metálica / asbesto">Lámina metálica / asbesto</option>
+            <option value="Carrizo, bambú o palma">Carrizo, bambú o palma</option>
+            <option value=" Embarro o bajareque">Embarro o bajareque </option>
+            <option value="Adobe">Adobe</option>
+            <option value="Madera">Madera</option>
+            <option value="Tabique, ladrillo, block o concreto ">Tabique, ladrillo, block o concreto </option></select><br><br>
+
+    <label for="l23"> ¿Qué tipo de baño o escusado tiene en su vivienda ? </label><br> 
+    <select ><option value="No tiene">No tiene</option>
+            <option value="Pozo u hoyo negro">Pozo u hoyo negro</option>
+            <option value="Le echan agua con cubeta">Le echan agua con cubeta</option>
+            <option value="Sin admisión de agua (letrina seca / húmeda)">Sin admisión de agua (letrina seca / húmeda)</option>
+            <option value="Con conexión y con descarga directa de agua">Con conexión y con descarga directa de agua</option></select> <br><br>
+
+    <label for="l24">¿Qué tipo de drenaje o desagüe de aguas tiene en su vivienda? </label><br> 
+    <select ><option value="A la red pública ">A la red pública </option>
+            <option value="A una fosa séptica ">A una fosa séptica </option>
+            <option value="No tiene desagüe">No tiene desagüe</option>
+            <option value="A una tubería que da a una grieta o barranca">A una tubería que da a una grieta o barranca</option>
+            <option value="A una tubería que da a un río, lago o mar"> A una tubería que da a un río, lago o mar</option></select> <br><br>
+
+    <label for="l25">¿En su vivienda, que hacen con la basura? </label><br> 
+    <select ><option value="La queman">La queman</option>
+            <option value="La tiran al río, lago, mar o barranca">La tiran al río, lago, mar o barranca </option>
+            <option value="La tiran en un terreno baldío o calle">La tiran en un terreno baldío o calle</option>
+            <option value="La tiran en el basurero público">La tiran en el basurero público </option>
+            <option value="La tiran en un contenedor, la recoge un camión / carro de basura "> La tiran en un contenedor, la recoge un camión / carro de basura </option></select> <br><br>
+
+    <label for="l26"> En su vivienda, ¿la luz eléctrica la obtienen? </label><br> 
+    <select ><option value="Del servicio público">Del servicio público</option>
+            <option value="De una planta particular ">De una planta particular </option>
+            <option value="De panel solar">De panel solar</option>
+            <option value="De otra fuente ">De otra fuente </option>
+            <option value="No tienen luz eléctrica ">No tienen luz eléctrica </option></select> <br><br>
+
+    <label for="l27">  ¿Cuál es el combustible que más usan para cocinar?</label><br> 
+    <select ><option value="Electricidad ">Electricidad </option>
+            <option value="Gas L.P. ">Gas L.P. </option>
+            <option value="Leña o carbón">Leña o carbón</option></select> <br><br>
+
+    <label for="l28">. La vivienda que habita, ¿es? </label><br> 
+    <select ><option value="Propia y está pagada ">Propia y está pagada</option>
+            <option value="Propia y la está pagando">Propia y la está pagando  </option>
+            <option value="Propia y está hipotecada">Propia y está hipotecada</option>
+            <option value="Prestada o al está cuidando">Prestada o al está cuidando</option>
+            <option value="Rentada o alquilada">Rentada o alquilada</option></select> <br><br>
+
+
+        <h2>Subir Documentos</h2>
+    <form action= http://localhost:8000/subir_documento method="post" enctype="multipart/form-data">
+        Archivo PDF: <input type="file" name="archivo"><br>
+        <input type="submit" value="Subir">
+    </form>
+
+
+   
+
+</body>
+</html>

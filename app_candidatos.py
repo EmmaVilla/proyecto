@@ -1,27 +1,174 @@
-from fastapi import FastAPI, UploadFile, Form, File, HTTPException
-from fastapi.responses import FileResponse
+
+
+from fastapi import FastAPI, UploadFile, Form, Request, File, Depends, HTTPException
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from typing import List
-from datetime import datetime
-import requests
-
-import shutil
-import os
-import fitz  # PyMuPDF
 import psycopg2
-
-
-# Conexión a PostgreSQL
-conn = psycopg2.connect(
-    dbname="socioeconomicos",
-    user="postgres",
-    password="admin",
-    host="localhost",
-    port="5432"
-)
-cursor = conn.cursor()
+from datetime import datetime
 
 app = FastAPI()
+templates = Jinja2Templates(directory="templates")
+
+def get_db():
+    return psycopg2.connect(
+        dbname="socioeconomicos",
+        user="postgres",
+        password="admin",
+        host="localhost",
+        port="5432"
+    )
+
+
+@app.get("/", response_class=HTMLResponse)
+async def login_form(request: Request):
+    response = templates.TemplateResponse("login.html", {"request": request})
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
+@app.post("/login")
+async def login(email: str = Form(...), password: str = Form(...)):
+    
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT rol FROM candidatos WHERE email=%s AND password=%s", (email, password))
+    resultado = cur.fetchone()
+    conn.close()
+
+    if resultado and resultado[0] == "candidato":
+        response = RedirectResponse(url="/candidato", status_code=303)
+        response.set_cookie(key="usuario_autenticado", value="candidato", httponly=True)
+        return response
+    elif resultado and resultado[0] == "admin":
+        response = RedirectResponse(url="/redadmin", status_code=303)
+        response.set_cookie(key="usuario_autenticado", value="admin", httponly=True)
+        return response
+    else:
+        raise HTTPException(status_code=401, detail="Credenciales incorrectas o usuario no creado")
+    
+@app.get("/candidato", response_class=HTMLResponse)
+async def candidato_panel(request: Request):
+    usuario = request.cookies.get("usuario_autenticado")
+    if usuario != "candidato":
+        return RedirectResponse(url="/", status_code=303)
+
+    response = templates.TemplateResponse("candidato.html", {"request": request})
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
+@app.get("/redadmin", response_class=HTMLResponse)
+async def login_form(request: Request):
+    response = templates.TemplateResponse("admin.html", {"request": request})
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+    
+@app.post("/admin/consultar", response_class=HTMLResponse)
+async def consultar_admin(request: Request, candidato_id: int = Form(...), curp: str = Form(...)):
+    usuario = request.cookies.get("usuario_autenticado")
+    if usuario != "admin":
+        return RedirectResponse(url="/", status_code=303)
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    # Consultar datos del candidato
+    cur.execute("""
+        SELECT c.id, c.nombre, c.email, d.antecedentes, e.estudio_completo, e.documentos_completos, e.api_consulta_completa, e.pdf_generado
+        FROM candidatos c
+        LEFT JOIN datos_socioeconomicos d ON c.id = d.candidato_id
+        LEFT JOIN etapas e ON c.id = e.candidato_id
+        WHERE c.id = %s
+    """, (candidato_id,))
+    datos = cur.fetchone()
+
+    # Consultar API de Búho Legal
+    litigios = {}
+    try:
+        resultado = consultar_litigios(curp)
+        litigios = resultado
+    except Exception as e:
+        litigios = {"error": str(e)}
+
+    conn.close()
+
+    if datos:
+        datos_dict = {
+            "id": datos[0],
+            "nombre": datos[1],
+            "email": datos[2],
+            "antecedentes": datos[3],
+            "estudio_completo": datos[4],
+            "documentos_completos": datos[5],
+            "api_consulta_completa": datos[6],
+            "pdf_generado": datos[7]
+        }
+    else:
+        datos_dict = {}
+
+    response = templates.TemplateResponse("admin.html", {
+        "request": request,
+        "datos": datos_dict,
+        "litigios": litigios
+    })
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
+
+@app.get("/logout")
+def logout():
+    response = RedirectResponse(url="/", status_code=303)
+    response.delete_cookie("usuario_autenticado")
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+print("Rutas protegidas y encabezados de caché configurados correctamente.")
+
+
+@app.get("/redregistro", response_class=HTMLResponse)
+async def login_form(request: Request):
+    usuario = request.cookies.get("usuario_autenticado")
+    if usuario == "candidato":
+        return RedirectResponse(url="/candidato", status_code=303)
+    elif usuario == "admin":
+        return RedirectResponse(url="/admin", status_code=303)
+
+    response = templates.TemplateResponse("registro.html", {"request": request})
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
+
+@app.post("/registro")
+async def registro(nombre: str = Form(...), email: str = Form(...), password: str = Form(...)):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM candidatos WHERE email=%s", (email,))
+    if cur.fetchone():
+        conn.close()
+        return RedirectResponse(url="/candidato?mensaje=El+usuario+ya+existe", status_code=303)
+
+    cur.execute(
+        "INSERT INTO candidatos (nombre, email, password, fecha_registro, rol) VALUES (%s, %s, %s, %s, %s)",
+        (nombre, email, password, datetime.now(), "candidato")
+    )
+    conn.commit()
+    conn.close()
+    return RedirectResponse(url="/candidato?mensaje=Registro+exitoso", status_code=303)
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 class DatosSocioeconomicos(BaseModel):
     situacion_familiar: str
@@ -33,13 +180,26 @@ class DatosSocioeconomicos(BaseModel):
     referencias: str
     antecedentes: str
 
-@app.post("/registro")
-def registrar(nombre: str = Form(...), email: str = Form(...), password: str = Form(...)):
-    cursor.execute("INSERT INTO candidatos (nombre, email, password, fecha_registro) VALUES (%s, %s, %s, %s) RETURNING id",
-                   (nombre, email, password, datetime.now()))
-    candidato_id = cursor.fetchone()[0]
+
+@app.post("/datos_socioeconomicos")
+def guardar_datos(
+    candidato_id: int = Form(...),
+    situacion_familiar: str = Form(...),
+    ingresos: str = Form(...),
+    gastos: str = Form(...),
+    situacion_laboral: str = Form(...),
+    educacion: str = Form(...),
+    vivienda: str = Form(...),
+    referencias: str = Form(...),
+    antecedentes: str = Form(...)
+):
+    cursor.execute(
+        "INSERT INTO datos_socioeconomicos VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+        (candidato_id, situacion_familiar, ingresos, gastos,
+         situacion_laboral, educacion, vivienda, referencias, antecedentes)
+    )
     conn.commit()
-    return {"mensaje": "Registro exitoso", "candidato_id": candidato_id}
+    return {"mensaje": "Datos guardados correctamente"}
 
 
 @app.post("/subir_documento")
@@ -67,34 +227,11 @@ def subir_documento(candidato_id: int = Form(...), archivos: List[UploadFile] = 
     return {"mensaje": f"{len(archivos)} documentos subidos correctamente"}
 
 
-@app.post("/datos_socioeconomicos")
-def guardar_datos(
-    candidato_id: int = Form(...),
-    situacion_familiar: str = Form(...),
-    ingresos: str = Form(...),
-    gastos: str = Form(...),
-    situacion_laboral: str = Form(...),
-    educacion: str = Form(...),
-    vivienda: str = Form(...),
-    referencias: str = Form(...),
-    antecedentes: str = Form(...)
-):
-    cursor.execute(
-        "INSERT INTO datos_socioeconomicos VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
-        (candidato_id, situacion_familiar, ingresos, gastos,
-         situacion_laboral, educacion, vivienda, referencias, antecedentes)
-    )
-    conn.commit()
-    return {"mensaje": "Datos guardados correctamente"}
-
 
 # Credenciales de Búho Legal
 BUHO_USERNAME = "emmanuel.v@acheme.com.mx"
 BUHO_PASSWORD = "Nuevo*2025$"
-
-
 # Función para obtener el token de autenticación
-
 def obtener_token():
     url = "https://www.buholegal.com/apikey/"
     payload = {
@@ -110,7 +247,6 @@ def obtener_token():
         raise Exception(f"Error {response.status_code}: {response.text}")
 
 # Función para consultar litigios por CURP
-
 def consultar_litigios(curp):
     token = obtener_token()
     url = f"https://www.buholegal.com/busqueda/?curp={curp}"
@@ -159,8 +295,6 @@ def consultar(candidato_id: int = Form(...), curp: str = Form(...)):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
 
 @app.get("/generar_pdf")
 def generar_pdf(candidato_id: int):
