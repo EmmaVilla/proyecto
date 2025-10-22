@@ -4,28 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Registro de Candidato</title>
+    <link rel="stylesheet" href="static/estilo.css">
 </head>
 <body>
-    <h1>Crear cuenta</h1>
-    <h3>Registro de Candidato</h3>
+        <div class="login">
+            <div><h1>Crear cuenta</h1></div>
+            <div><h3>Registro de Candidato</h3></div>
+            {% if mensaje %}
+                <p>{{ mensaje }}</p>
+            {% endif %}
+            <form action="/registro" method="post">
+                <div><label for="nombre" >Nombre completo:</label><br>
+                <input type="text" id="nombre" name="nombre" placeholder="          En Mayusculas"><br><br></div>
+                    
+                <div><label for="email">Correo electrónico:</label><br>
+                <input type="email" id="email" name="email" placeholder="     alguien@correo.com" required><br><br></div>
 
-    {% if mensaje %}
-        <p>{{ mensaje }}</p>
-    {% endif %}
+                <div><label for="password">Contraseña:</label><br>
+                <input type="password" id="password" name="password" placeholder="                ****" ><br><br></div>
 
-    <form action="/registro" method="post">
-        <label for="nombre">Nombre completo:</label><br>
-        <input type="text" id="nombre" name="nombre" required><br><br>
+                <div><button type="submit">Registrarse</button></div>
+            </form>
 
-        <label for="email">Correo electrónico:</label><br>
-        <input type="email" id="email" name="email" required><br><br>
-
-        <label for="password">Contraseña:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
-
-        <button type="submit">Registrarse</button>
-    </form>
-
-    <p>¿Ya tienes cuenta? <a href="/">Iniciar sesión</a></p>
+            <div><p>¿Ya tienes cuenta? <a href="/">Iniciar sesión</a></p></div>
+        </div>
 </body>
 </html>

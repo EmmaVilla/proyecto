@@ -1,0 +1,25 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;}
+
+
+body {
+    font-family: Century Gothic;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: url('/static/fondo.png') no-repeat center center fixed;
+    background-size: cover; 
+     /* evita scroll si no es necesario overflow: hidden;*/
+}
+
+
+.login {
+    text-align: center;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+
+}
